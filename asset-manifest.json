@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/toy-cat-jjal-maker/static/css/main.7380a559.css",
+    "main.js": "/toy-cat-jjal-maker/static/js/main.2e091e18.js",
+    "static/js/453.07dcb90b.chunk.js": "/toy-cat-jjal-maker/static/js/453.07dcb90b.chunk.js",
+    "index.html": "/toy-cat-jjal-maker/index.html",
+    "main.7380a559.css.map": "/toy-cat-jjal-maker/static/css/main.7380a559.css.map",
+    "main.2e091e18.js.map": "/toy-cat-jjal-maker/static/js/main.2e091e18.js.map",
+    "453.07dcb90b.chunk.js.map": "/toy-cat-jjal-maker/static/js/453.07dcb90b.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.7380a559.css",
+    "static/js/main.2e091e18.js"
+  ]
+}
