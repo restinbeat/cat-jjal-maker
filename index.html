@@ -24,10 +24,6 @@
             flex-wrap: wrap;
             gap: 15px;
         }
-
-        .favorites img {
-            width: 150px;
-        }
     </style>
 
     <body>
@@ -44,53 +40,99 @@
         <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
         <script type="text/babel">
             console.log('야옹');
-            const head = <h1>1번째 고양이 가라사대</h1>;
-            const form = (
-                <form>
-                    <input
-                        type="text"
-                        name="name"
-                        placeholder="영어 대사를 입력해주세요"
-                    />
-                    <button type="submit">생성</button>
-                </form>
-            );
+            const Title = (props) => {
+                return <h1>{props.children}</h1>;
+            };
 
-            const catItem = (
-                <li>
-                    <img src="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react" />
-                </li>
-            );
+            const Form = ({ handleFormSubmit }) => {
+                return (
+                    <form onSubmit={handleFormSubmit}>
+                        <input
+                            type="text"
+                            name="name"
+                            placeholder="영어 대사를 입력해주세요"
+                        />
+                        <button type="submit">생성</button>
+                    </form>
+                );
+            };
 
-            const favorites = (
-                <ul class="favorites">
-                    {catItem}
-                    {catItem}
-                    {catItem}
-                </ul>
-            );
+            function CatItem(props) {
+                return (
+                    <li>
+                        <img src={props.img} style={{ width: '150px' }} />
+                    </li>
+                );
+            }
 
-            const mainCard = (
-                <div class="main-card">
-                    <img
-                        src="https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react"
-                        alt="고양이"
-                        width="400"
-                    />
-                    <button>🤍</button>
-                </div>
-            );
-            const app = (
-                <div>
-                    {head}
-                    {form}
-                    {mainCard}
-                    {favorites}
-                </div>
-            );
+            function Favorites() {
+                return (
+                    <ul className="favorites">
+                        <CatItem img="https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/inflearn" />
+                        <CatItem img="https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript" />
+                    </ul>
+                );
+            }
+
+            const MainCard = ({ img }) => {
+                function handleHearthClick() {
+                    console.log('click heart');
+                }
+                function handleHearthMouseOver() {
+                    console.log('mouse over heart');
+                }
+                return (
+                    <div className="main-card">
+                        <img src={img} alt="고양이" width="400" />
+                        <button
+                            onClick={handleHearthClick}
+                            onMouseOver={handleHearthMouseOver}
+                        >
+                            🤍
+                        </button>
+                    </div>
+                );
+            };
+            const App = () => {
+                const CAT1 =
+                    'https://cataas.com/cat/HSENVDU4ZMqy7KQ0/says/react';
+                const CAT2 =
+                    'https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/inflearn';
+                const CAT3 =
+                    'https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript';
+
+                // counterState initial value
+                const [counter, setCounter] = React.useState(1);
+
+                // same code
+                // const counter = counterState[0];
+                // const setCounter = counterState[1];
+
+                console.log('카운터', counter);
+
+                function handleFormSubmit(event) {
+                    // http form 전송시 기본 refresh
+                    // refresh 제어
+                    event.preventDefault();
+                    console.log('send form');
+                    setCounter(counter + 1);
+                    setMainCat(CAT2);
+                }
+
+                const [mainCat, setMainCat] = React.useState(CAT1);
+
+                return (
+                    <div>
+                        <Title>{counter}번째 고양이 가라사대</Title>
+                        <Form handleFormSubmit={handleFormSubmit} />
+                        <MainCard img={mainCat} />
+                        <Favorites />
+                    </div>
+                );
+            };
 
             const draw = document.querySelector('#app');
-            ReactDOM.render(app, draw);
+            ReactDOM.render(<App />, draw);
         </script>
     </body>
 </html>
