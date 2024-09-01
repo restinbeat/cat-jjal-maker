@@ -39,12 +39,20 @@
         ></script>
         <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
         <script type="text/babel">
-            console.log('야옹');
+            const jsonLocalStorage = {
+                setItem: (key, value) => {
+                    localStorage.setItem(key, JSON.stringify(value));
+                },
+                getItem: (key) => {
+                    return JSON.parse(localStorage.getItem(key));
+                },
+            };
+
             const Title = (props) => {
                 return <h1>{props.children}</h1>;
             };
 
-            const Form = () => {
+            const Form = ({ updateMainCat }) => {
                 const includesHangul = (text) =>
                     /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
                 const [value, setValue] = React.useState('');
@@ -60,11 +68,15 @@
                 }
 
                 function handleFormSubmit(e) {
+                    // http form 전송시 기본 refresh
+                    // refresh 제어
                     e.preventDefault();
                     setErrorMessage('');
                     if (value === '') {
                         setErrorMessage('빈 값으로 만들 수 없습니다.');
+                        return;
                     }
+                    updateMainCat();
                 }
 
                 return (
@@ -100,11 +112,11 @@
                 );
             }
 
-            const MainCard = ({ img, handleHearthClick }) => {
+            const MainCard = ({ img, onHeartClick }) => {
                 return (
                     <div className="main-card">
                         <img src={img} alt="고양이" width="400" />
-                        <button onClick={handleHearthClick}>🤍</button>
+                        <button onClick={onHeartClick}>🤍</button>
                     </div>
                 );
             };
@@ -117,40 +129,41 @@
                     'https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript';
 
                 // counterState initial value
-                const [counter, setCounter] = React.useState(1);
+                const [counter, setCounter] = React.useState(
+                    jsonLocalStorage.getItem('counter')
+                );
 
                 // same code
                 // const counter = counterState[0];
                 // const setCounter = counterState[1];
 
                 const [mainCat, setMainCat] = React.useState(CAT1);
-                const [favorites, setFavorites] = React.useState([CAT1, CAT2]);
+                const [favorites, setFavorites] = React.useState(
+                    jsonLocalStorage.getItem('favorites') || []
+                );
 
-                console.log('카운터', counter);
-
-                function handleFormSubmit(event) {
-                    // http form 전송시 기본 refresh
-                    // refresh 제어
-                    event.preventDefault();
-                    console.log('send form');
-                    setCounter(counter + 1);
+                function updateMainCat() {
                     setMainCat(CAT2);
+
+                    const nextCounter = counter + 1;
+                    setCounter(nextCounter);
+                    jsonLocalStorage.setItem('counter', nextCounter);
                 }
 
-                function handleHearthClick() {
-                    console.log('click heart');
-
+                function handleHeartClick() {
                     // ES6 spread operator
-                    setFavorites([...favorites, CAT3]);
+                    const nextFavorites = [...favorites, mainCat];
+                    setFavorites(nextFavorites);
+                    jsonLocalStorage.setItem('favorites', nextFavorites);
                 }
 
                 return (
                     <div>
                         <Title>{counter}번째 고양이 가라사대</Title>
-                        <Form handleFormSubmit={handleFormSubmit} />
+                        <Form updateMainCat={updateMainCat} />
                         <MainCard
                             img={mainCat}
-                            handleHearthClick={handleHearthClick}
+                            onHeartClick={handleHeartClick}
                         />
                         <Favorites favorites={favorites} />
                     </div>
