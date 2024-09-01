@@ -44,15 +44,40 @@
                 return <h1>{props.children}</h1>;
             };
 
-            const Form = ({ handleFormSubmit }) => {
+            const Form = () => {
+                const includesHangul = (text) =>
+                    /[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/i.test(text);
+                const [value, setValue] = React.useState('');
+                const [errorMessage, setErrorMessage] = React.useState('');
+
+                function handleInputChange(e) {
+                    const userValue = e.target.value;
+                    setErrorMessage('');
+                    if (includesHangul(userValue)) {
+                        setErrorMessage('한글은 입력할 수 없습니다.');
+                    }
+                    setValue(userValue.toUpperCase());
+                }
+
+                function handleFormSubmit(e) {
+                    e.preventDefault();
+                    setErrorMessage('');
+                    if (value === '') {
+                        setErrorMessage('빈 값으로 만들 수 없습니다.');
+                    }
+                }
+
                 return (
                     <form onSubmit={handleFormSubmit}>
                         <input
                             type="text"
                             name="name"
                             placeholder="영어 대사를 입력해주세요"
+                            value={value}
+                            onChange={handleInputChange}
                         />
                         <button type="submit">생성</button>
+                        <p style={{ color: 'red' }}>{errorMessage}</p>
                     </form>
                 );
             };
@@ -65,31 +90,21 @@
                 );
             }
 
-            function Favorites() {
+            function Favorites({ favorites }) {
                 return (
                     <ul className="favorites">
-                        <CatItem img="https://cataas.com/cat/BxqL2EjFmtxDkAm2/says/inflearn" />
-                        <CatItem img="https://cataas.com/cat/18MD6byVC1yKGpXp/says/JavaScript" />
+                        {favorites.map((cat) => (
+                            <CatItem img={cat} key={cat} />
+                        ))}
                     </ul>
                 );
             }
 
-            const MainCard = ({ img }) => {
-                function handleHearthClick() {
-                    console.log('click heart');
-                }
-                function handleHearthMouseOver() {
-                    console.log('mouse over heart');
-                }
+            const MainCard = ({ img, handleHearthClick }) => {
                 return (
                     <div className="main-card">
                         <img src={img} alt="고양이" width="400" />
-                        <button
-                            onClick={handleHearthClick}
-                            onMouseOver={handleHearthMouseOver}
-                        >
-                            🤍
-                        </button>
+                        <button onClick={handleHearthClick}>🤍</button>
                     </div>
                 );
             };
@@ -108,6 +123,9 @@
                 // const counter = counterState[0];
                 // const setCounter = counterState[1];
 
+                const [mainCat, setMainCat] = React.useState(CAT1);
+                const [favorites, setFavorites] = React.useState([CAT1, CAT2]);
+
                 console.log('카운터', counter);
 
                 function handleFormSubmit(event) {
@@ -119,14 +137,22 @@
                     setMainCat(CAT2);
                 }
 
-                const [mainCat, setMainCat] = React.useState(CAT1);
+                function handleHearthClick() {
+                    console.log('click heart');
+
+                    // ES6 spread operator
+                    setFavorites([...favorites, CAT3]);
+                }
 
                 return (
                     <div>
                         <Title>{counter}번째 고양이 가라사대</Title>
                         <Form handleFormSubmit={handleFormSubmit} />
-                        <MainCard img={mainCat} />
-                        <Favorites />
+                        <MainCard
+                            img={mainCat}
+                            handleHearthClick={handleHearthClick}
+                        />
+                        <Favorites favorites={favorites} />
                     </div>
                 );
             };
